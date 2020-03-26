@@ -13,6 +13,14 @@ class Book extends Model
      * @var array
      */
     protected $fillable = [
-        'bookName','authorId','categoryId',
+        'bookName','review','authorId','categoryId',
     ];
+
+    public function category (){
+        return $this->belongsTo('App\Model\Category');
+    }
+
+    public function author (){
+        return $this->belongsTo('App\Model\Author');
+    }
 }

@@ -22,9 +22,17 @@ class CategoryBusiness extends BaseBusiness
 
     public function getAllCategory()
     {
-        $data= $this->categoryRepository->getAll();
+        $data = $this->categoryRepository->getAll();
 
-       return $this->returnSuccess($data);
+        return $this->returnSuccess($data);
+    }
+
+    public function updateCategory($data, $id)
+    {
+        dd($data);
+        $data = $this->categoryRepository->update($id, $data);
+
+        return $this->returnSuccess($data);
     }
 
 }

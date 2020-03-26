@@ -1,25 +1,29 @@
-@extends('welcome')
+@extends('layout.main')
 @section('content')
-    <h1>test ne hihi</h1>
-    <div id="test">
+    <div>
+        <div class="container">
+            <h2>Hover Rows</h2>
+            <p>The .table-hover class enables a hover state on table rows:</p>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>action</th>
+                </tr>
+                </thead>
+                <tbody class="msg">
 
+                </tbody>
+            </table>
+        </div>
+        <div class="regTitle">
+
+        </div>
     </div>
-    @endsection
+@endsection
 @section('script')
-    <script>
-        $(document).ready(function () {
-            fetchData();
-        });
+    <script type="text/javascript" src="{{ asset('js/business/test.js') }}"></script>
 
-        function fetchData() {
-            $.ajax({
-               url: '/api/category',
-                type: 'GET',
-                dataType: 'json',
-            }).done((res) => {
-                console.log(res);
-            });
-        }
-    </script>
-
-    @endsection
+@endsection
