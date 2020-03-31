@@ -20091,23 +20091,39 @@ __webpack_require__(/*! ../bootstrap */ "./resources/js/bootstrap.js");
 __webpack_require__(/*! ./abc */ "./resources/js/business/abc.js");
 
 $(document).ready(function () {
-  fetchData();
+  var url = $('input[name="txtHndUrlApiCate"]').val();
+  fetchData(url);
+  $(document).on('click', '.btn-edit', function () {
+    clickBtnEdit(this);
+  });
+  $(document).on('click', '#btnSave', function () {
+    updateCate(this);
+  });
+  $("#poupCategory").on('hide.bs.modal', function () {
+    $(".form-err").remove();
+  });
+  $(document).on('click', '.deleteCate', function () {
+    deleteCategory(this);
+  });
+  $('#confirm-delete').on('click', 'btn-ok', function (e) {
+    console.log($(this).data(''));
+  });
 });
 
-function fetchData() {
+function fetchData(_x) {
   return _fetchData.apply(this, arguments);
 }
 
 function _fetchData() {
-  _fetchData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+  _fetchData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(url) {
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return axios.get('api/category').then(function (res) {
+            return axios.get(url).then(function (res) {
               var data = res.data.data;
-              $('.msg').html(buildTable(data));
+              $('.msg').html(data);
             });
 
           case 2:
@@ -20120,13 +20136,65 @@ function _fetchData() {
   return _fetchData.apply(this, arguments);
 }
 
-function buildTable(array) {
-  var result = array.map(function (item, index) {
-    var data = "\n        <tr>\n            <td>".concat(index, "</td>\n            <td>").concat(item.categoryName, "</td>\n            <td>").concat(item.description, "</td>\n            <td><button>Delete</button> <button>edit</button></td>\n        </tr>\n        ");
-    return data;
+function clickBtnEdit(obj) {
+  var tdObject = $(obj).closest('td');
+  var id = tdObject.find('input[name="txtHdnId"]').val();
+  axios.get("api/category/".concat(id)).then(function (res) {
+    var data = res.data.data;
+    $('#categoryName').val(data.categoryName);
+    $('#description').val(data.description);
+    $('#txtId').val(data.id);
   });
-  return result;
-} // require('./abc');
+}
+
+function updateCate(obj) {
+  var data = {
+    categoryName: $('#categoryName').val(),
+    description: $('#description').val()
+  };
+  var id = $('#txtId').val();
+
+  if (id) {
+    axios.put("api/category/".concat(id), data).then(function (res) {
+      fetchData('api/category');
+      $('#poupCategory').modal('hide');
+    })["catch"](function (err) {
+      var error = err.response.data.error;
+
+      if (error.code === 422) {
+        $(".form-err").remove();
+        $.each(error.message, function (key, value) {
+          $("#".concat(key)).after("<p class=\"form-err text-danger\">".concat(value, "</p>"));
+        });
+      }
+    });
+  } else {
+    axios.post("api/category", data).then(function (res) {
+      fetchData('api/category');
+      $('#poupCategory').modal('hide');
+    })["catch"](function (err) {
+      var error = err.response.data.error;
+
+      if (error.code === 422) {
+        $(".form-err").remove();
+        $.each(error.message, function (key, value) {
+          $("#".concat(key)).after("<p class=\"form-err text-danger\">".concat(value, "</p>"));
+        });
+      }
+    });
+  }
+} // function deleteCategory(obj) {
+//     console.log('abc');
+//     let id = $(obj).closest('td').find('input[name="txtHdnId"]').val();
+//     axios.delete(`api/category/${id}`).then(res => {
+//         fetchData('api/category');
+//         // $('#poupCategory').modal('hide');
+//     }).catch(err=>{
+//         let error = err.response.data.error;
+//         alert(error.message);
+//     })
+// }
+// require('./abc');
 
 /***/ }),
 

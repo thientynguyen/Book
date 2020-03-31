@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Business\CategoryBusiness;
 
 class CategoryController extends Controller
@@ -27,9 +28,17 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response($this->categoryBusiness->getAllCategory());
+        if (!$request->ajax()) {
+            return response()->json([]);
+        }
+
+        $items = $this->categoryBusiness->getAllCategory()['data'];
+        $body = view('components.table_body', compact('items'))->render();
+        return response()->json([
+            'data' => $body
+        ]);
 
     }
 
@@ -39,9 +48,16 @@ class CategoryController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UpdateCategoryRequest $request)
     {
-        //
+
+        if (isset($request->validator) && $request->validator->fails()) {
+            $message = $request->validator->messages();
+
+            return $this->response('',422,$message);
+        }
+        return response($this->categoryBusiness->createCategory($request->all()));
+
     }
 
     /**
@@ -53,6 +69,8 @@ class CategoryController extends Controller
     public function show($id)
     {
         //
+        $data = $this->categoryBusiness->showCategoryById($id);
+        return $this->response($data);
     }
 
     /**
@@ -62,11 +80,18 @@ class CategoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        $categoryName = $request->categoryName;
-        $description = $request->description;
-        return response($this->categoryBusiness->updateCategory([$categoryName,$description],$id));
+        if (isset($request->validator) && $request->validator->fails()) {
+            $message = $request->validator->messages();
+
+            return $this->response('',422,$message);
+        }
+        $data =[
+            'categoryName'=>$request->categoryName,
+            'description'=> $request->description,
+        ];
+        return response($this->categoryBusiness->updateCategory($data,$id));
     }
 
     /**
@@ -78,5 +103,6 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //
+        return response($this->categoryBusiness->deleteCategory($id));
     }
 }
