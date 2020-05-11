@@ -4,7 +4,7 @@
 @include('layout.head')
 </head>
 <body>
-<div>
+<div id="app">
     @include('layout.header')
     @yield('content')
     @include('layout.footer')

@@ -70,8 +70,9 @@
     </head>
     <body>
         <div class="container">
+            <h1>hello</h1>
         </div>
             @yield('script')
-
+{{--<script src="js/app.js"></script>--}}
     </body>
 </html>

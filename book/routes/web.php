@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Events\WebsocketDemoEvent;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    broadcast(new WebsocketDemoEvent('some data'));
+//return view('welcome');
     return view('index');
 });
 Route::get('/category','CategoryController@index');
